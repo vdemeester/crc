@@ -37,6 +37,9 @@ func NewGoodhostsCache(destDir string) *Cache {
 }
 
 func (c *Cache) IsCached() bool {
+	if filepath.IsAbs(c.binaryName) {
+		return true
+	}
 	if _, err := os.Stat(filepath.Join(c.destDir, c.binaryName)); os.IsNotExist(err) {
 		return false
 	}

@@ -43,8 +43,12 @@ func (oc OcLocalRunner) GetKubeconfigPath() string {
 
 // UseOcWithConfig return the oc binary along with valid kubeconfig
 func UseOCWithConfig(machineName string) OcConfig {
+	ocBinaryPath := filepath.Join(constants.CrcBinDir, constants.OcBinaryName)
+	if filepath.IsAbs(constants.OcBinaryName) {
+		ocBinaryPath = constants.OcBinaryName
+	}
 	localRunner := OcLocalRunner{
-		OcBinaryPath:   filepath.Join(constants.CrcOcBinDir, constants.OcBinaryName),
+		OcBinaryPath:   ocBinaryPath,
 		KubeconfigPath: filepath.Join(constants.MachineInstanceDir, machineName, "kubeconfig"),
 	}
 	return NewOcConfig(localRunner, constants.DefaultContext, constants.DefaultName)

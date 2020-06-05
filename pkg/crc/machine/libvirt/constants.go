@@ -16,10 +16,10 @@ const (
 )
 
 const (
-	MachineDriverCommand = "crc-driver-libvirt"
 	MachineDriverVersion = "0.12.8"
 )
 
 var (
+	MachineDriverCommand     = "crc-driver-libvirt"
 	MachineDriverDownloadUrl = fmt.Sprintf("https://github.com/code-ready/machine-driver-libvirt/releases/download/%s/crc-driver-libvirt", MachineDriverVersion)
 )

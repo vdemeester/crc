@@ -1,6 +1,6 @@
 package constants
 
-const (
+var (
 	OcBinaryName        = "oc"
 	PodmanBinaryName    = "podman"
 	GoodhostsBinaryName = "goodhosts"

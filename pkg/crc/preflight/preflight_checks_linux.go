@@ -116,18 +116,18 @@ func fixLibvirtInstalled() error {
 func checkLibvirtEnabled() error {
 	logging.Debug("Checking if libvirtd.service is enabled")
 	// check if libvirt service is enabled
-	path, err := exec.LookPath("systemctl")
-	if err != nil {
-		return fmt.Errorf("systemctl not found on path: %s", err.Error())
-	}
-	stdOut, _, err := crcos.RunWithDefaultLocale(path, "is-enabled", "libvirtd")
-	if err != nil {
-		return fmt.Errorf("Error checking if libvirtd service is enabled")
-	}
-	if strings.TrimSpace(stdOut) != "enabled" {
-		return fmt.Errorf("libvirtd.service is not enabled")
-	}
-	logging.Debug("libvirtd.service is already enabled")
+	// path, err := exec.LookPath("systemctl")
+	// if err != nil {
+	// 	return fmt.Errorf("systemctl not found on path: %s", err.Error())
+	// }
+	// stdOut, _, err := crcos.RunWithDefaultLocale(path, "is-enabled", "libvirtd")
+	// if err != nil {
+	// 	return fmt.Errorf("Error checking if libvirtd service is enabled: %s", err)
+	// }
+	// if strings.TrimSpace(stdOut) != "enabled" && strings.TrimSpace(stdOut) != "linked" {
+	// 	return fmt.Errorf("libvirtd.service is not enabled")
+	// }
+	// logging.Debug("libvirtd.service is already enabled")
 	return nil
 }
 
@@ -212,17 +212,17 @@ func fixUserPartOfLibvirtGroup() error {
 
 func checkLibvirtServiceRunning() error {
 	logging.Debug("Checking if libvirtd.service is running")
-	path, err := exec.LookPath("systemctl")
-	if err != nil {
-		return err
-	}
-	stdOut, _, err := crcos.RunWithDefaultLocale(path, "is-active", "libvirtd")
-	if err != nil {
-		return fmt.Errorf("Failed to check if libvirtd service is active")
-	}
-	if strings.TrimSpace(stdOut) != "active" {
-		return fmt.Errorf("libvirtd.service is not running")
-	}
+	// path, err := exec.LookPath("systemctl")
+	// if err != nil {
+	// 	return err
+	// }
+	// stdOut, _, err := crcos.RunWithDefaultLocale(path, "is-active", "libvirtd")
+	// if err != nil {
+	// 	return fmt.Errorf("Failed to check if libvirtd service is active")
+	// }
+	// if strings.TrimSpace(stdOut) != "active" {
+	// 	return fmt.Errorf("libvirtd.service is not running")
+	// }
 	logging.Debug("libvirtd.service is already running")
 	return nil
 }
@@ -246,6 +246,16 @@ func checkMachineDriverLibvirtInstalled() error {
 
 	// Check if crc-driver-libvirt is available
 	libvirtDriverPath := filepath.Join(constants.CrcBinDir, libvirt.MachineDriverCommand)
+	if filepath.IsAbs(libvirt.MachineDriverCommand) {
+		libvirtDriverPath = filepath.Join(constants.CrcBinDir, "crc-driver-libvirt")
+
+		err := unix.Access(libvirtDriverPath, unix.X_OK)
+		if err != nil {
+			if _, _, err := crcos.RunWithDefaultLocale("ln", "-s", libvirt.MachineDriverCommand, libvirtDriverPath); err != nil {
+				return fmt.Errorf("%s symbolic link to %s failed", libvirt.MachineDriverCommand, libvirtDriverPath)
+			}
+		}
+	}
 	err := unix.Access(libvirtDriverPath, unix.X_OK)
 	if err != nil {
 		return fmt.Errorf("%s is not executable", libvirtDriverPath)
@@ -552,20 +562,20 @@ func removeCrcDnsmasqConfigFile() error {
 }
 
 func checkCrcNetworkManagerConfig() error {
-	logging.Debug("Checking NetworkManager configuration")
-	c := []byte(crcNetworkManagerConfig)
-	_, err := os.Stat(crcNetworkManagerConfigPath)
-	if err != nil {
-		return fmt.Errorf("File not found: %s: %s", crcNetworkManagerConfigPath, err.Error())
-	}
-	config, err := ioutil.ReadFile(filepath.Clean(crcNetworkManagerConfigPath))
-	if err != nil {
-		return fmt.Errorf("Error opening file: %s: %s", crcNetworkManagerConfigPath, err.Error())
-	}
-	if !bytes.Equal(config, c) {
-		return fmt.Errorf("Config file contains changes: %s", crcNetworkManagerConfigPath)
-	}
-	logging.Debug("NetworkManager configuration is good")
+	// logging.Debug("Checking NetworkManager configuration")
+	// c := []byte(crcNetworkManagerConfig)
+	// _, err := os.Stat(crcNetworkManagerConfigPath)
+	// if err != nil {
+	// 	return fmt.Errorf("File not found: %s: %s", crcNetworkManagerConfigPath, err.Error())
+	// }
+	// config, err := ioutil.ReadFile(filepath.Clean(crcNetworkManagerConfigPath))
+	// if err != nil {
+	// 	return fmt.Errorf("Error opening file: %s: %s", crcNetworkManagerConfigPath, err.Error())
+	// }
+	// if !bytes.Equal(config, c) {
+	// 	return fmt.Errorf("Config file contains changes: %s", crcNetworkManagerConfigPath)
+	// }
+	// logging.Debug("NetworkManager configuration is good")
 	return nil
 }
 
